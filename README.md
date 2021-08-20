@@ -28,4 +28,3 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
   * Webpack
   * .....
 
-* coderwhy Vue.js尤大 感谢!
