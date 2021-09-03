@@ -1,6 +1,6 @@
-const BASE_URL = process.env.NODE_ENV === "production" ? "/vuemall/" : "/";
+// const BASE_URL = process.env.NODE_ENV === "production" ? "/vuemall/" : "/";
 module.exports = {
-  publicPath: BASE_URL,
+  // publicPath: BASE_URL,
   configureWebpack: {
     resolve: {
       alias: {
