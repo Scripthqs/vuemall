@@ -1,61 +1,66 @@
 <template>
-    <div class="detail">
-      <detail-nav-bar @titleClick="titleClick" ref="DetailNav"/>
-      <scroll class="detail-scroll" ref="scroll" @scroll="contentScroll" :probe-type="3">
-<!--        属性： topImage 传入值： top-image-->
-        <detail-swiper :top-images="topImages" ref="detailImage"/>
-        <detail-base-info :goods="goods"/>
-        <detail-shop-info :shop="shop"/>
-        <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"/>
-        <detail-params :param-info="paramsInfo" ref="params"/>
-        <detail-comment-info :comment-info="commentInfo" ref="comment"/>
-        <goods-list :goods="recommend" ref="recommend"/>
+  <div id="detail">
+    <detail-nav-bar
+      class="detail-nav"
+      @titleClick="navBarTitleClick"
+      :scrollIndex="currentIndex"
+    ></detail-nav-bar>
+    <scroll
+      class="content"
+      ref="detailScroll"
+      :probeType="3"
+      @scroll="detailScroll"
+    >
+      <detail-swiper :topImages="topImages"></detail-swiper>
+      <detail-base-info :goods="goods"></detail-base-info>
+      <detail-shop-info :shop="shop"></detail-shop-info>
+      <detail-goods-info
+        :detailInfo="detailInfo"
+        @detailImgLoad="detailImgLoad"
+      ></detail-goods-info>
+      <detail-param-info
+        :paramInfo="paramInfo"
+        ref="params"
+      ></detail-param-info>
+      <detail-comment-info :commentInfo="commentInfo" ref="comment" />
+      <goods-list :goods="recommend" ref="recommend" />
+    </scroll>
+    <detail-bottom-bar @addCart="addToCart" />
 
-      </scroll>
-      <back-top @click.native="backClick" v-show="isShowBackTop"/>
-      <detail-bottom-bar @addCart="addToCart"/>
-      <!-- <toast :message="message" :show="show"/> -->
-    </div>
+    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
+    <toast :message="toastMessage" :isShow="toastShow" />
+  </div>
 </template>
 
-
 <script>
-  import Scroll from "components/common/scroll/Scroll";
-  import GoodsList from "components/content/goods/GoodsList";
-  // import Toast from 'components/common/toast/Toast'
+import DetailNavBar from "./childComps/DetailNavBar.vue";
+import DetailSwiper from "./childComps/DetailSwiper.vue";
+import DetailBaseInfo from "./childComps/DetailBaseInfo.vue";
+import DetailShopInfo from "./childComps/DetailShopInfo.vue";
+import DetailGoodsInfo from "./childComps/DetailGoodsInfo.vue";
+import DetailParamInfo from "./childComps/DetailParamInfo.vue";
+import DetailCommentInfo from "./childComps/DetailCommentInfo.vue";
+import DetailBottomBar from "./childComps/DetailBottomBar.vue";
 
-  import DetailNavBar from "./childComps/DetailNavBar";
-  import DetailSwiper from "./childComps/DetailSwiper";
-  import DetailBaseInfo from "./childComps/DetailBaseInfo";
-  import DetailShopInfo from "./childComps/DetailShopInfo";
-  import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
-  import DetailParams from "./childComps/DetailParams";
-  import DetailCommentInfo from "./childComps/DetailCommentInfo";
-  import DetailBottomBar from "./childComps/DetailBottomBar";
+import GoodsList from "components/content/goods/GoodsList.vue";
+import BackTop from "components/content/backTop/BackTop";
+import Toast from "components/common/toast/Toast";
 
-  import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "@/network/detail";
-  import {itemListenerMixin, backTopMixin} from "@/common/mixin";
-  import {debounce} from "@/common/utils";
+import {
+  getDetail,
+  Goods,
+  Shop,
+  GoodsParam,
+  getRecommend,
+} from "network/detail";
+import { CartGoods } from "network/cart";
+import { debounce } from "@/common/utils";
+import { mapActions } from "vuex";
 
-  import {mapGetters, mapActions} from 'vuex'
+import Scroll from "components/common/scroll/Scroll";
 
-  export default {
+export default {
   name: "Detail",
-  components: {
-    Scroll,
-    GoodsList,
-    // Toast,
-    DetailSwiper,
-    DetailNavBar,
-    DetailBaseInfo,
-    DetailShopInfo,
-    DetailGoodsInfo,
-    DetailParams,
-    DetailCommentInfo,
-    DetailBottomBar,
-    getDetail
-  },
-  mixins: [itemListenerMixin, backTopMixin],
   data() {
     return {
       iid: null,
@@ -63,152 +68,166 @@
       goods: {},
       shop: {},
       detailInfo: {},
-      paramsInfo: {},
+      paramInfo: {},
       commentInfo: {},
       recommend: [],
-      themeTopYs: [],
-      getThemeTopY: null,
+      detailRefresh: null,
+      themTopYs: [],
+      getRealTopYs: null,
       currentIndex: 0,
-      // message: '',
-      // show: false
-    }
+      isShowBackTop: false,
+      itemInfo: {},
+      toastMessage: "",
+      toastShow: false,
+      timer: null,
+    };
   },
-  created() {
-    // 1. 保存传入的iid
-    this.iid = this.$route.params.iid
-    // 2. 根据iid请求详情数据
-    getDetail(this.iid).then(response => {
-      // 1. 获取顶部轮播数据
-      const data = response.result
-      this.topImages = data.itemInfo.topImages
-      // 2. 获取商品信息
-      this.goods = new Goods(data.itemInfo, data.columns, data.shopInfo.services)
-      // 3. 获取店铺信息
-      this.shop = new Shop(data.shopInfo)
-      // 4. 获取商品的详情数据
-      this.detailInfo = data.detailInfo
-      // 5. 获取参数信息
-      this.paramsInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
-      // 6.获取评论信息
-      if(data.rate.cRate !== 0) {
-        this.commentInfo = data.rate.list[0]
-      }
-      /*
-      DOM没有渲染
-      this.themeTopYs.push(0)
-      this.themeTopYs.push(-this.$refs.params.$el.offsetTop)
-      this.themeTopYs.push(-this.$refs.comment.$el.offsetTop)
-      this.themeTopYs.push(-this.$refs.recommend.$el.offsetTop)
-      console.log(this.themeTopYs);*/
-      this.$nextTick(() => {
-      /*  图片没有加载完成
-          this.themeTopYs = []
-          this.themeTopYs.push(0)
-          this.themeTopYs.push(-this.$refs.params.$el.offsetTop)
-          this.themeTopYs.push(-this.$refs.comment.$el.offsetTop)
-          this.themeTopYs.push(-this.$refs.recommend.$el.offsetTop)
-          console.log(this.themeTopYs);*/
-      })
-
-
-    })
-    getRecommend().then(response => {
-        this.recommend = response.data.list
-      })
-    // 4. 给getThemeTopY赋值 给函数赋值进行防抖
-      this.getThemeTopY = debounce(() => {
-        this.themeTopYs = []
-        this.themeTopYs.push(0)
-        this.themeTopYs.push(this.$refs.params.$el.offsetTop)
-        this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
-        this.themeTopYs.push(this.$refs.recommend.$el.offsetTop)
-        this.themeTopYs.push(Number.MAX_VALUE)
-      },100)
+  components: {
+    DetailNavBar,
+    DetailSwiper,
+    DetailBaseInfo,
+    DetailShopInfo,
+    Scroll,
+    DetailGoodsInfo,
+    DetailParamInfo,
+    DetailCommentInfo,
+    GoodsList,
+    DetailBottomBar,
+    DetailBottomBar,
+    BackTop,
+    Toast,
   },
   methods: {
-    ...mapActions(['addCart']),
-    imageLoad() {
-      // this.$refs.scroll.refresh()
-      this.refresh()
-      this.getThemeTopY()
+    ...mapActions(["addCart"]),
+    detailImgLoad() {
+      this.detailRefresh();
+      this.getRealTopYs();
     },
-    titleClick(index) {
-      this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 200)
+    navBarTitleClick(index) {
+      this.$refs.detailScroll.scrollTo(0, -this.themTopYs[index], 500);
     },
-    contentScroll(position) {
-      const positionY = -position.y;
-      let length = this.themeTopYs.length
-      for (let i = 0; i < length-1; i++) {
-        if(this.currentIndex !== i && (positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])) {
+    getTopYs() {
+      this.themTopYs = [];
+      if (this.$refs.params && this.$refs.comment && this.$refs.recommend)
+        this.themTopYs.push(
+          0,
+          this.$refs.params.$el.offsetTop,
+          this.$refs.comment.$el.offsetTop,
+          this.$refs.recommend.$el.offsetTop
+        );
+      // console.log(this.themTopYs);
+    },
+    detailScroll(position) {
+      const Y = -position.y;
+      const length = this.themTopYs.length;
+      for (let i = 0; i < length; i++) {
+        if (
+          (Y < this.themTopYs[i + 1] && i === 0) ||
+          (Y >= this.themTopYs[i] &&
+            Y < this.themTopYs[i + 1] &&
+            i > 0 &&
+            i < length) ||
+          (Y > this.themTopYs[i] && i === length - 1)
+        ) {
           this.currentIndex = i;
-          this.$refs.DetailNav.currentIndex = this.currentIndex;
-          // console.log(this.currentIndex);
         }
-        this.ListenerShowBackTop(position)
-
-        // this.isShowBackTop =  -position.y > BACK_POSITION ? true : false;
-       /* if((this.currentIndex !== i) && (
-          (i < length - 1 &&　positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])
-            || (i === length - 1 && positionY >= this.themeTopYs[i]))) {
-          this.currentIndex = i;
-          console.log(i);
-          // this.$refs.navbar.currentIndex = this.currentIndex
-        }*/
       }
+
+      // 1.判断BackTop是否显示
+      if (position.y < -900) {
+        this.isShowBackTop = true;
+      } else {
+        this.isShowBackTop = false;
+      }
+    },
+
+    backClick() {
+      this.$refs.detailScroll.scrollTo(0, 0, 500);
     },
     addToCart() {
-      // 1. 获取需要的展示参数数据
-      const product = {};
-      product.image = this.topImages[0]
-      product.title = this.goods.title
-      product.desc = this.goods.desc
-      product.price = this.goods.newPrice
-      product.iid = this.iid
-      product.checked = false
+      const product = new CartGoods(this.itemInfo);
+      // this.$store.dispatch("addCart", product);
 
-      // 将商品添加到购物车
-      // this.$store.commit("addCart", product)
-      // this.$store.dispatch("addCart", product).then(res => {
-      //   console.log(res)
-      // })
-      this.addCart(product).then(res => {
-        // this.show = true
-        // this.message = res
-        // setTimeout(() => {
-        //  this.show = false
-        // this.message = ''
-        // }, 1500)
-        console.log(this.$toast);
-        this.$toast.show(res)
-      })
-      //  添加购物车成功
-    }
+      // 由于通过mapActions将store中的方法映射了过来，因此可以直接调用改方法
+      //  这是普通方法使用toast，若想要看以插件形式封装的toast使用，看Cart中相关的
+      this.addCart(product).then((res) => {
+        this.toastMessage = res;
+        this.$toast.show(res, 1000);
+      });
+    },
   },
   mounted() {
-
-    // console.log("Detail");
-    /*  const refresh = debounce(this.$refs.scroll.refresh, 500)
-      this.itemImgListener = () => { // 3. 监听item中的图片加载完成
-        refresh()
-      }
-      this.$bus.$on('itemImageLoad', this.itemImgListener)*/
+    this.detailRefresh = debounce(this.$refs.detailScroll.refresh, 50);
+    this.getRealTopYs = debounce(this.getTopYs, 50);
+    this;
+    this.$bus.$on("CommendImageLoad", () => {
+      this.detailRefresh();
+      this.getRealTopYs();
+    });
   },
-  destroyed() {
-    // 2.取消全局事件的监听
-    this.$bus.$off('itemImageLoad', this.itemImgListener)
-  }
-}
+  created() {
+    // 保存传入的iid数据
+    this.iid = this.$route.params.iid;
+    // 发送网络请求请求详情页数据
+    getDetail(this.iid).then((res) => {
+      // console.log(res);
+      const data = res.result;
+      // 顶部图片轮播数据
+      this.topImages = data.itemInfo.topImages;
+
+      // 取出并整合需要使用的数据
+      this.goods = new Goods(
+        data.itemInfo,
+        data.columns,
+        data.shopInfo.services
+      );
+
+      // 取出并整合店家信息
+      this.shop = new Shop(data.shopInfo);
+
+      // 图片详情相关信息
+      this.detailInfo = data.detailInfo;
+
+      // detailParam相关信息整合
+      this.paramInfo = new GoodsParam(
+        data.itemParams.info,
+        data.itemParams.rule
+      );
+
+      // 取出评论信息
+      if (data.rate.cRate !== 0) {
+        this.commentInfo = data.rate.list[0];
+      }
+      this.itemInfo = data.itemInfo;
+    });
+
+    getRecommend().then((res) => {
+      this.recommend = res.data.list;
+    });
+  },
+};
 </script>
 
 <style scoped>
-  .detail {
-    height: 100vh;
-    position: relative;
-    z-index: 1;
-    background-color: #ffffff;
-  }
-  .detail-scroll {
-    height: calc(100% - 44px - 2.09rem);
-    overflow: hidden;
-  }
+#detail {
+  position: relative;
+  background-color: #fff;
+  /* z-index: 9; */
+  height: 100vh;
+}
+.detail-nav {
+  position: relative;
+  z-index: 9;
+  background-color: #fff;
+}
+.content {
+  /* 注意这里的calc()内部运算符左右一定要加空格，最好别用这个方法，感觉会有bug */
+  /* height: calc(100vh - 44px); */
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 44px;
+  bottom: 49px;
+  overflow: hidden;
+}
 </style>

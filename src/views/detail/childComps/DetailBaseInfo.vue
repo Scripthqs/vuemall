@@ -4,7 +4,7 @@
     <div class="info-price">
       <span class="n-price">{{ goods.newPrice }}</span>
       <span class="o-price">{{ goods.oldPrice }}</span>
-      <span v-if="goods.discount" class="discount">{{ goods.discount }}</span>
+      <span class="discount">{{ goods.discount }}</span>
     </div>
     <div class="info-other">
       <span>{{ goods.columns[0] }}</span>
@@ -30,12 +30,12 @@ export default {
   props: {
     goods: {
       type: Object,
-      default () {
-        return {}
-      }
-    }
-  }
-}
+      default() {
+        return {};
+      },
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -94,10 +94,10 @@ export default {
 }
 
 .info-service-item img {
-  width: 14px;
-  height: 14px;
-  position: relative;
-  top: 2px;
+  width: 13px;
+  height: 13px;
+  /* position: relative; */
+  vertical-align: middle;
 }
 
 .info-service-item span {

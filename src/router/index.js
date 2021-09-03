@@ -1,20 +1,18 @@
-import Vue from "vue"
-import VueRouter from "vue-router";
+import Vue from 'vue'
+import VueRouter from 'vue-router'
 
-const Home = () => import('@/views/home/Home')
-const Category = () => import('@/views/category/Category')
-const Cart = () => import('@/views/cart/Cart')
-const Profile = () => import('@/views/profile/Profile')
-const Detail = () => import('@/views/detail/Detail')
+const Home = () => import('views/home/Home')
+const Category = () => import('views/category/Category')
+const Cart = () => import('views/cart/Cart')
+const Profile = () => import('views/profile/Profile')
+const Detail = () => import('views/detail/Detail')
 
-// 安装插件
 Vue.use(VueRouter)
 
-// 路由的注册
 const routes = [
   {
-    path: '',
-    redirect: '/home'
+    path: "/",
+    redirect: "/home"
   },
   {
     path: '/home',
@@ -35,14 +33,13 @@ const routes = [
   {
     path: '/detail/:iid',
     component: Detail
-  }
+  },
 ]
 
-// 路由的实例
 const router = new VueRouter({
-  routes,
-  mode: 'history'
+  mode: 'history',
+  base: process.env.BASE_URL,
+  routes
 })
 
-// 暴露路由
 export default router

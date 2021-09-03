@@ -1,99 +1,66 @@
+// 用于封装better-scroll
+
 <template>
-  <div ref="wrapper" class="wrapper">
-    <div>
+  <div class="wrapper" ref="wrapper">
+    <div class="content">
       <slot></slot>
     </div>
   </div>
 </template>
 
 <script>
-import BScroll from 'better-scroll'
-
-
+import BScroll from "better-scroll";
 export default {
   name: "Scroll",
+  data() {
+    return {
+      scroll: null,
+    };
+  },
   props: {
     probeType: {
       type: Number,
       default: 0,
     },
-    click: {
-      type: Boolean,
-      default: true
-    },
     pullUpLoad: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    data: {
-      type: Array,
-      default () {
-        return []
-      }
-    }
   },
-  data () {
-    return {
-      scroll: null
+  mounted() {
+    this.scroll = new BScroll(this.$refs.wrapper, {
+      click: true,
+      probeType: this.probeType,
+      pullUpLoad: this.pullUpLoad,
+    });
+    if (this.probeType === 2 || this.probeType === 3) {
+      this.scroll.on("scroll", (position) => {
+        this.$emit("scroll", position);
+      });
     }
-  },
-  computed: {
 
-    scrollY () {
-      return this.scroll.y
-    },
-  },
-  mounted () {
-    setTimeout(this._initScroll, 100)
+    if (this.pullUpLoad) {
+      this.scroll.on("pullingUp", () => {
+        this.$emit("pullingUp");
+      });
+    }
   },
   methods: {
-    _initScroll () {
-      // 1.创建BetterScroll
-      this.scroll = new BScroll(this.$refs.wrapper, {
-        probeType: this.probeType,
-        click: this.click,
-        pullUpLoad: this.pullUpLoad,
-        disableTouch: false
-      })
+    // 注意在调用scroll方法时，最好判断一下scroll是否被挂载好了
 
-      // 2.事件滚动
-      if (this.probeType === 2 || this.probeType === 3) {
-        this.scroll.on('scroll', position => {
-          // console.log(position);
-          this.$emit('scroll', position)
-        })
-      }
-
-      // 3.上拉加载
-      if (this.pullUpLoad) {
-        this.scroll.on('pullingUp', () => {
-          // console.log('上拉加载更多');
-          this.$emit('pullingUp')
-        })
-      }
+    scrollTo(x, y, time = 300) {
+      this.scroll && this.scroll.scrollTo(x, y, time);
     },
-    refresh () {
-      // console.log('---');
-
-      this.scroll && this.scroll.refresh && this.scroll.refresh()
+    finishPullingUp() {
+      this.scroll && this.scroll.finishPullUp();
     },
-    finishPullUp () {
-      this.scroll && this.scroll.finishPullUp && this.scroll.finishPullUp()
-    },
-    scrollTo (x, y, time = 100) {
-      this.scroll && this.scroll.scrollTo && this.scroll.scrollTo(x, y, time)
+    refresh() {
+      this.scroll && this.scroll.refresh();
+      // console.log("---");
     },
   },
-  watch: {
-    data () {
-      setTimeout(this.refresh, 20)
-    }
-  }
-}
+};
 </script>
 
 <style scoped>
-.wrapper {
-  overflow: hidden;
-}
 </style>

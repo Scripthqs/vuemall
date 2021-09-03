@@ -1,5 +1,5 @@
 <template>
-  <div class="nav-bar ignore">
+  <div class="nav-bar">
     <div class="left"><slot name="left"></slot></div>
     <div class="center"><slot name="center"></slot></div>
     <div class="right"><slot name="right"></slot></div>
@@ -8,22 +8,23 @@
 
 <script>
 export default {
-  name: "NavBar"
-}
+  name: "NavBar",
+};
 </script>
 
 <style scoped>
-  .nav-bar {
+  .nav-bar{
     display: flex;
     height: 44px;
     line-height: 44px;
+    font-weight: 700;
     text-align: center;
-    box-shadow: 0 1px 1px rgba(100,100,100, .3);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
   }
-  .left, .right {
+  .left, .right{
     width: 60px;
   }
-  .center {
+  .center{
     flex: 1;
   }
 </style>

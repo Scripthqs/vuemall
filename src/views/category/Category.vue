@@ -1,91 +1,214 @@
 <template>
-  <div>
-    <scroll class="category" ref="scroll" @scroll="contentScroll" :probe-type="3">
-      <ul>
-        <li>分类1</li>
-        <li>分类2</li>
-        <li>分类3</li>
-        <li>分类4</li>
-        <li>分类5</li>
-        <li>分类6</li>
-        <li>分类7</li>
-        <li>分类8</li>
-        <li>分类9</li>
-        <li>分类10</li>
-        <li>分类11</li>
-        <li>分类12</li>
-        <li>分类13</li>
-        <li>分类14</li>
-        <li>分类15</li>
-        <li>分类16</li>
-        <li>分类17</li>
-        <li>分类18</li>
-        <li>分类19</li>
-        <li>分类20</li>
-        <li>分类21</li>
-        <li>分类22</li>
-        <li>分类23</li>
-        <li>分类24</li>
-        <li>分类25</li>
-        <li>分类26</li>
-        <li>分类27</li>
-        <li>分类28</li>
-        <li>分类29</li>
-        <li>分类30</li>
-        <li>分类31</li>
-        <li>分类32</li>
-        <li>分类33</li>
-        <li>分类34</li>
-        <li>分类35</li>
-
-      </ul>
-    </scroll>
-    <back-top @click.native="backClick" v-show="isShowBackTop"/>
+  <div class="category">
+    <!-- navbar -->
+    <nav-bar class="nav-bar">
+      <div slot="center"><span>商品分类</span></div>
+    </nav-bar>
+    <!-- 中间的内容区域 -->
+    <div class="content">
+      <scroll class="menu-left">
+        <category-menu :detailMenu="categories" @menuClick="menuClick" />
+      </scroll>
+      <scroll
+        class="content-right"
+        ref="rightScroll"
+        @scroll="contentScroll"
+        :probeType="3"
+      >
+        <tab-content-category :showDetailCategory="showDetailCategory" />
+        <tab-control
+          :titles="['综合', '新款', '销量']"
+          ref="tabControl"
+          @tabClick="tabClick"
+        />
+        <goods-list :goods="showDetails" />
+      </scroll>
+    </div>
+    <back-top @click.native="backTopClick" v-show="isBackTopShow"></back-top>
   </div>
 </template>
 
 <script>
-import Scroll from "@/components/common/scroll/Scroll";
-import {backTopMixin} from "@/common/mixin";
+import NavBar from "components/common/navbar/NavBar";
+import GoodsList from "components/content/goods/GoodsList";
+import TabControl from "components/content/tabControl/TabControl";
+import BackTop from "components/content/backTop/BackTop";
+
+import CategoryMenu from "./childComps/CategoryMenu.vue";
+import TabContentCategory from "./childComps/TabContentCategory.vue";
+
+import {
+  getCategory,
+  getSubcategory,
+  getCategoryDetail,
+} from "@/network/category";
+import { debounce } from "@/common/utils";
 
 export default {
   name: "Category",
-  mixins: [backTopMixin],
+  components: {
+    NavBar,
+    CategoryMenu,
+    TabContentCategory,
+    GoodsList,
+    TabControl,
+    BackTop,
+  },
   data() {
     return {
-      scroll: null
-    }
-  },
-  created() {
-    //    this.scroll = new BScroll(document.querySelector('.wrapper'), {} // 没有挂载获取不了模版元素
-  },
-  mounted() {
+      categories: [],
+      categoryData: [],
+      menuIndex: 0,
+      rightRefresh: null,
+      isBackTopShow: false,
+    };
   },
   methods: {
+    _getCategory() {
+      getCategory().then((res) => {
+        this.categories = res.data.category.list;
+        for (let index in this.categories) {
+          // console.log(index);
+          this.categories[index].saveY = 0;
+          this.categoryData[index] = {
+            subcategories: [],
+            categoryDetail: {
+              currentTypeIndex: 0,
+              pop: [],
+              new: [],
+              sell: [],
+            },
+          };
+          this._getSubcategory(index);
+        }
+
+        // 请求下来第一页的pop，new，sell
+        this._getCategoryDetail(0, "pop");
+        this._getCategoryDetail(0, "new");
+        this._getCategoryDetail(0, "sell");
+      });
+    },
+    _getSubcategory(index) {
+      getSubcategory(this.categories[index].maitKey).then((res) => {
+        this.categoryData[index].subcategories = res.data.list;
+      });
+    },
+    _getCategoryDetail(index, type) {
+      getCategoryDetail(this.categories[index].miniWallkey, type).then(
+        (res) => {
+          this.categoryData[index].categoryDetail[type] = res;
+          this.categoryData = { ...this.categoryData };
+        }
+      );
+    },
+
+    menuClick(index) {
+      this._getCategoryDetail(index, "pop");
+      this._getCategoryDetail(index, "new");
+      this._getCategoryDetail(index, "sell");
+      this.menuIndex = index;
+      this.$refs.tabControl.currentIndex =
+        this.categoryData[this.menuIndex].categoryDetail.currentTypeIndex;
+      if (this.categories[this.menuIndex]) {
+        this.$refs.rightScroll.refresh();
+        this.$refs.rightScroll.scrollTo(
+          0,
+          this.categories[this.menuIndex].saveY,
+          0
+        );
+      } else {
+        this.$refs.rightScroll.refresh();
+        this.$refs.rightScroll.scrollTo(0, 0, 0);
+      }
+    },
+    tabClick(index) {
+      this.categoryData[this.menuIndex].categoryDetail.currentTypeIndex = index;
+    },
+    backTopClick() {
+      this.$refs.rightScroll.scrollTo(0, 0, 500);
+    },
     contentScroll(position) {
-      // 1. 判断BackTop显示隐藏
-      // this.isShowBackTop =  -position.y > BACK_POSITION ? true : false;
-      this.ListenerShowBackTop(position)
-      // 2. 判断是否吸顶
-      this.isTabFixed = -position.y >= this.tabOffsetTop ? true : false;
-    }
+      const Y = position.y;
+      // 回到顶部相关判断
+      if (Y < -900) {
+        this.isBackTopShow = true;
+      } else {
+        this.isBackTopShow = false;
+      }
+      // 保留当前页面的浏览位置，有Bug图片会重新加载导致位置错乱，体验不太好
+      if (this.categories[this.menuIndex]) {
+        this.categories[this.menuIndex].saveY = Y;
+      }
+    },
   },
-  components: {Scroll}
-}
+  computed: {
+    currentTab() {
+      if (!this.categoryData[this.menuIndex]) {
+        return "";
+      }
+      switch (
+        this.categoryData[this.menuIndex].categoryDetail.currentTypeIndex
+      ) {
+        case 0:
+          return "pop";
+        case 1:
+          return "new";
+        case 2:
+          return "sell";
+      }
+    },
+    showDetailCategory() {
+      if (!this.categories[this.menuIndex]) {
+        return [];
+      }
+      return this.categoryData[this.menuIndex].subcategories;
+    },
+    showDetails() {
+      if (!this.categoryData[this.menuIndex]) {
+        return [];
+      }
+      return this.categoryData[this.menuIndex].categoryDetail[this.currentTab];
+    },
+  },
+  created() {
+    this._getCategory();
+  },
+  mounted() {
+    this.rightRefresh = debounce(this.$refs.rightScroll.refresh, 50);
+    this.$bus.$on("categoryImgLoad", () => {
+      this.rightRefresh();
+    });
+  },
+};
 </script>
 
 <style scoped>
-  /*.wrapper {*/
-  /*  height: 250px;*/
-  /*  background-color: red;*/
+.category {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+.nav-bar {
+  background-color: var(--color-tint);
+  color: #fff;
+}
+.content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 44px;
+  bottom: 49px;
+  overflow: hidden;
+  display: flex;
+}
 
-  /*  !*overflow: hidden;*!*/
-  /*  !*overflow-y: scroll;*!*/
-  /*}*/
-  ul li {
-    height: 400px;
-  }
-  .category {
-    height: 500px;
-  }
+.menu-left {
+  padding: 5px 0;
+  height: 100%;
+}
+.content-right {
+  height: 100%;
+  margin: 5px;
+  flex: 1;
+}
 </style>

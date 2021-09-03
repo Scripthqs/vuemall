@@ -1,99 +1,123 @@
 <template>
-  <div class="cart_list_item">
-    <cart-check-button
-      @click.native="checkClick"
-      :is-checked="item.checked"
-      ref="checkButtonRef"
-    />
-    <div class="item_img" @click="checkClick">
-      <img :src="item.image" alt="" />
+  <div class="list-item">
+    <!-- 是否选中图标 -->
+    <div class="item-selector">
+      <check-button
+        class="ck-button"
+        :isChecked="product.checked"
+        @click.native="checkClick(itemIndex)"
+      />
     </div>
-    <div class="item_info" @click="infoClick(item)">
-      <p class="item_title">{{ item.title }}</p>
-      <p class="item_desc">{{ item.desc }}</p>
-      <span class="item_price">{{ item.price }}</span>
-      <span class="item_count">x{{ item.count }}</span>
+    <!-- 左边 -->
+    <div class="item-img">
+      <div class="div-img">
+        <img :src="product.imgURL" alt="" @load="imageLoad" />
+      </div>
+    </div>
+
+    <!-- 右边 -->
+    <div class="item-right">
+      <div class="item-title" @click="titleClick">{{ product.title }}</div>
+      <div class="item-desc">商品描述：{{ product.desc }}</div>
+
+      <div class="item-price-count">
+        <span class="item-price">¥{{ product.newPrice }}</span>
+        <span class="item-count">×{{ product.count }}</span>
+      </div>
     </div>
   </div>
 </template>
+
 <script>
-import CartCheckButton from "./CartCheckButton";
+import CheckButton from "components/content/checkButton/CheckButton";
 export default {
+  name: "CartListItem",
+  components: { CheckButton },
   props: {
-    item: {
+    product: {
       type: Object,
       default() {
-        return {}
-      }
-    }
+        return {};
+      },
+    },
+    itemIndex: {
+      type: Number,
+      default: 0,
+    },
   },
   methods: {
-    checkClick() {
-      this.item.checked = !this.item.checked;
+    imageLoad() {
+      this.$emit("CartImgLoad");
     },
-    //信息点击事件
-    infoClick(item) {
-      this.$router.push("/detail/" + item.iid);
-    }
+    checkClick(index) {
+      this.$store.dispatch("clickCheck", index);
+    },
+    titleClick() {
+      this.$router.push("/detail/" + this.product.iid);
+    },
   },
-  components: {
-    CartCheckButton
-  }
 };
 </script>
 
 <style scoped>
-.cart_list_item {
-  width: 100%;
-  /* height: 5.5rem; */
-  height: 100px;
-  border-bottom: 0.04rem solid rgba(128, 128, 128, 0.4);
+.list-item {
+  width: 100vw;
   display: flex;
-  padding: 0.4rem;
-  padding-left: 0rem;
+  align-items: center;
+  padding: 5px;
+  border-bottom: 1px solid #ccc;
 }
-
-.item_img {
-  width: 3.5rem;
-  height: 100%;
+.item-selector {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.item_img img {
-  width: 100%;
-  height: 100%;
-  border-radius: 0.4rem;
+.item-img {
+  width: 25vw;
+  height: 30vw;
 }
-
-.item_info {
-  position: relative;
-  width: calc(100% - 3.5rem - 1.2rem - 0.4rem);
-  margin-left: 0.4rem;
-}
-.item_info p {
-  display: inline-block;
-  width: 100%;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.item-img .div-img {
+  width: 95%;
+  height: 95%;
+  margin: 2.5% 2.5%;
+  border-radius: 5px;
   overflow: hidden;
 }
-.item_title {
-  font-size: 0.75rem;
-  padding-bottom: 0.5rem;
+.item-img img {
+  width: 100%;
+  vertical-align: top;
 }
-.item_desc {
-  font-size: 0.6rem;
-  color: gray;
+.item-right {
+  width: 62.5vw;
+  height: 30vw;
+  font-size: 17px;
+  color: #333;
+  padding: 5px 10px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
-.item_price {
-  position: absolute;
-  left: 0;
-  bottom: 0.4rem;
-  font-size: 0.75rem;
+.item-title,
+.item-desc {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.item-desc {
+  font-size: 14px;
+  color: #666;
+}
+.item-price-count {
+  display: flex;
+  justify-content: space-between;
+}
+.item-price {
   color: orangered;
 }
-.item_count {
-  position: absolute;
-  right: 0.4rem;
-  bottom: 0.4rem;
-  font-size: 0.75rem;
+.ck-button {
+  flex: none;
 }
 </style>

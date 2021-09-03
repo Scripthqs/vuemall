@@ -1,18 +1,14 @@
-const BASE_URL = process.env.NODE_ENV === "production" ? "/vuemall/" : "/";
 module.exports = {
-  publicPath: BASE_URL,
   configureWebpack: {
     resolve: {
       alias: {
-        "assets": '@/assets',
-        "common": '@/common',
-        "components": '@/components',
-        "views": '@/views',
-        "network": '@/network',
+        'components': '@/components',
+        'content': 'components/content',
+        'common': 'components/common',
+        'assets': '@/assets',
+        'network': '@/network',
+        'views': '@/views',
       }
     }
-  },
-  css: {
-    extract: false
   }
 }
