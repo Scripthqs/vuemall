@@ -40,8 +40,8 @@ const routes = [
 
 // 路由的实例
 const router = new VueRouter({
-  routes,
-  mode: 'history'
+  routes
+  // mode: 'history'
 })
 
 // 暴露路由
