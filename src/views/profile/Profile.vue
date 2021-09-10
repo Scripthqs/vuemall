@@ -1,6 +1,8 @@
 <template>
   <div id="profile">
-    <nav-bar class="nav-bar"><div slot="center">RAYLE商城</div></nav-bar>
+    <nav-bar class="nav-bar">
+      <div slot="center">我的信息</div>
+    </nav-bar>
     <!--1.单独封装一个组件: 利用slot知识点-->
     <UserInfo></UserInfo>
 
@@ -33,76 +35,76 @@
 </template>
 
 <script>
-  import UserInfo from './childComps/UserInfo'
-  import ListView from './childComps/ListView'
-  import NavBar from 'common/navbar/NavBar'
+import UserInfo from './childComps/UserInfo'
+import ListView from './childComps/ListView'
+import NavBar from 'common/navbar/NavBar'
 
-	export default {
-		name: "Profile",
-    components: {
-		  UserInfo, ListView, NavBar
-    },
-    data: function () {
-		  return {
-		    orderList: [
-          {icon: '#order', iconColor: '#ff8198', info: '我的消息'},
-          {icon: '#point', iconColor: '#fc7b53', info: '积分商城'},
-          {icon: '#vip', iconColor: '#ffc636', info: '会员卡'},
-        ],
-        serviceList: [
-          {icon: '#service', iconColor: '#ff8198', info: '我的购物车'},
-          {icon: '#download', iconColor: '#ff8198', info: '下载购物APP'},
-        ]
-      }
-    },
-    mounted: function () {
+export default {
+  name: "Profile",
+  components: {
+    UserInfo, ListView, NavBar
+  },
+  data: function () {
+    return {
+      orderList: [
+        { icon: '#order', iconColor: '#ff8198', info: '我的消息' },
+        { icon: '#point', iconColor: '#fc7b53', info: '积分商城' },
+        { icon: '#vip', iconColor: '#ffc636', info: '会员卡' },
+      ],
+      serviceList: [
+        { icon: '#service', iconColor: '#ff8198', info: '我的购物车' },
+        { icon: '#download', iconColor: '#ff8198', info: '下载购物APP' },
+      ]
     }
-	}
+  },
+  mounted: function () {
+  }
+}
 </script>
 
 <style scoped>
-  #profile {
-    background-color: #f2f2f2;
-  }
+#profile {
+  background-color: #f2f2f2;
+}
 
-  .nav-bar {
-    background-color: var(--color-tint);
-    color: #fff;
-  }
+.nav-bar {
+  background-color: var(--color-tint);
+  color: #fff;
+}
 
-  .account {
-    display: flex;
-  }
+.account {
+  display: flex;
+}
 
-  .account-item {
-    width: 100%;
-    background-color: #fff;
-    margin-right: 1px;
-    text-align: center;
-  }
+.account-item {
+  width: 100%;
+  background-color: #fff;
+  margin-right: 1px;
+  text-align: center;
+}
 
-  .account-item:last-of-type {
-    margin-right: 0;
-  }
+.account-item:last-of-type {
+  margin-right: 0;
+}
 
-  .account-item {
-    color: #666;
-    font-size: 13px;
-    padding: 18px;
-  }
+.account-item {
+  color: #666;
+  font-size: 13px;
+  padding: 18px;
+}
 
-  .account-item .balance {
-    font-size: 24px;
-    font-weight: 700;
-    color: #ff5f3e;
-  }
+.account-item .balance {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ff5f3e;
+}
 
-  .account-info {
-    margin-top: 6px;
-  }
+.account-info {
+  margin-top: 6px;
+}
 
-  .order-list, .service-list {
-    margin-top: 12px;
-  }
-
+.order-list,
+.service-list {
+  margin-top: 12px;
+}
 </style>
