@@ -49,9 +49,9 @@ export default {
       banners: null,
       recommends: null,
       goods: {
-        pop: { page: 0, list: [] },
-        new: { page: 0, list: [] },
-        sell: { page: 0, list: [] },
+        pop: { page: 4, list: [] },
+        new: { page: 4, list: [] },
+        sell: { page: 4, list: [] },
       },
       currentType: "pop",
       isShowBackTop: false,
