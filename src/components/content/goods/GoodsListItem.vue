@@ -16,26 +16,26 @@ export default {
   props: {
     goodsItem: {
       type: Object,
-      default() {
-        return {};
+      default () {
+        return {}
       },
     },
   },
   methods: {
-    imageLoad() {
+    imageLoad () {
       if (this.$route.path.indexOf("/home") !== -1) {
-        this.$bus.$emit("itemImageLoad");
+        this.$bus.$emit("itemImageLoad")
       } else if (this.$route.path.indexOf("/detail") !== -1) {
-        this.$bus.$emit("CommendImageLoad");
+        this.$bus.$emit("CommendImageLoad")
       } else if (this.$route.path.indexOf("/category") !== -1) {
-        this.$bus.$emit("categoryImgLoad");
+        this.$bus.$emit("categoryImgLoad")
       }
     },
-    itemClick() {
+    itemClick () {
       // console.log("---");
       if (this.iid) {
         // 注意,这里由于老师的recommend的商品没有详情页的数据,因此这里推荐商品不跳转详情页
-        this.$router.push("/detail/" + this.iid);
+        this.$router.push("/detail/" + this.iid)
         // this.$router.replace("/detail/" + this.goodsItem.iid);
         // this.$router.push({
         //   path: "/detail",
@@ -44,23 +44,23 @@ export default {
         //   },
         // });
       } else {
-        this.$toast.show("服务器中暂无商品详细", 1500);
+        this.$toast.show("服务器中暂无商品详细", 1500)
       }
     },
   },
   computed: {
-    showImage() {
+    showImage () {
       if (this.goodsItem.show) {
-        return this.goodsItem.show.img;
+        return this.goodsItem.show.img
       } else if (this.goodsItem.image) {
-        return this.goodsItem.image;
+        return this.goodsItem.image
       } else {
-        return this.goodsItem.img;
+        return this.goodsItem.img
       }
     },
-    iid() {
+    iid () {
       if (this.goodsItem.iid) {
-        return this.goodsItem.iid;
+        return this.goodsItem.iid
       }
     },
   },

@@ -1,16 +1,12 @@
 // 用于展示商品页面
 <template>
   <div class="goods">
-    <goods-list-item
-      v-for="(item, index) in goods"
-      :goodsItem="item"
-      :key="index"
-    />
+    <goods-list-item v-for="(item, index) in goods" :goodsItem="item" :key="index" />
   </div>
 </template>
 
 <script>
-import GoodsListItem from "./GoodsListItem.vue";
+import GoodsListItem from "./GoodsListItem.vue"
 export default {
   name: "GoodsList",
   components: {
@@ -19,8 +15,8 @@ export default {
   props: {
     goods: {
       type: Array,
-      default() {
-        return [];
+      default () {
+        return []
       },
     },
   },

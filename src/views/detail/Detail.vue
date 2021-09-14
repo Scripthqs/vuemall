@@ -1,29 +1,15 @@
 <template>
   <div id="detail">
-    <detail-nav-bar
-      class="detail-nav"
-      @titleClick="navBarTitleClick"
-      :scrollIndex="currentIndex"
-    ></detail-nav-bar>
-    <scroll
-      class="content"
-      ref="detailScroll"
-      :probeType="3"
-      @scroll="detailScroll"
-    >
+    <detail-nav-bar class="detail-nav" @titleClick="navBarTitleClick" :scrollIndex="currentIndex"></detail-nav-bar>
+    <scroll class="content" ref="detailScroll" :probeType="3" @scroll="detailScroll">
       <detail-swiper :topImages="topImages"></detail-swiper>
       <detail-base-info :goods="goods"></detail-base-info>
       <detail-shop-info :shop="shop"></detail-shop-info>
-      <detail-goods-info
-        :detailInfo="detailInfo"
-        @detailImgLoad="detailImgLoad"
-      ></detail-goods-info>
-      <detail-param-info
-        :paramInfo="paramInfo"
-        ref="params"
-      ></detail-param-info>
+      <detail-goods-info :detailInfo="detailInfo" @detailImgLoad="detailImgLoad"></detail-goods-info>
+      <detail-param-info :paramInfo="paramInfo" ref="params"></detail-param-info>
       <detail-comment-info :commentInfo="commentInfo" ref="comment" />
       <goods-list :goods="recommend" ref="recommend" />
+
     </scroll>
     <detail-bottom-bar @addCart="addToCart" />
 
@@ -33,18 +19,18 @@
 </template>
 
 <script>
-import DetailNavBar from "./childComps/DetailNavBar.vue";
-import DetailSwiper from "./childComps/DetailSwiper.vue";
-import DetailBaseInfo from "./childComps/DetailBaseInfo.vue";
-import DetailShopInfo from "./childComps/DetailShopInfo.vue";
-import DetailGoodsInfo from "./childComps/DetailGoodsInfo.vue";
-import DetailParamInfo from "./childComps/DetailParamInfo.vue";
-import DetailCommentInfo from "./childComps/DetailCommentInfo.vue";
-import DetailBottomBar from "./childComps/DetailBottomBar.vue";
+import DetailNavBar from "./childComps/DetailNavBar.vue"
+import DetailSwiper from "./childComps/DetailSwiper.vue"
+import DetailBaseInfo from "./childComps/DetailBaseInfo.vue"
+import DetailShopInfo from "./childComps/DetailShopInfo.vue"
+import DetailGoodsInfo from "./childComps/DetailGoodsInfo.vue"
+import DetailParamInfo from "./childComps/DetailParamInfo.vue"
+import DetailCommentInfo from "./childComps/DetailCommentInfo.vue"
+import DetailBottomBar from "./childComps/DetailBottomBar.vue"
 
-import GoodsList from "components/content/goods/GoodsList.vue";
-import BackTop from "components/content/backTop/BackTop";
-import Toast from "components/common/toast/Toast";
+import GoodsList from "components/content/goods/GoodsList.vue"
+import BackTop from "components/content/backTop/BackTop"
+import Toast from "components/common/toast/Toast"
 
 import {
   getDetail,
@@ -52,16 +38,16 @@ import {
   Shop,
   GoodsParam,
   getRecommend,
-} from "network/detail";
-import { CartGoods } from "network/cart";
-import { debounce } from "@/common/utils";
-import { mapActions } from "vuex";
+} from "network/detail"
+import { CartGoods } from "network/cart"
+import { debounce } from "@/common/utils"
+import { mapActions } from "vuex"
 
-import Scroll from "components/common/scroll/Scroll";
+import Scroll from "components/common/scroll/Scroll"
 
 export default {
   name: "Detail",
-  data() {
+  data () {
     return {
       iid: null,
       topImages: [],
@@ -80,7 +66,7 @@ export default {
       toastMessage: "",
       toastShow: false,
       timer: null,
-    };
+    }
   },
   components: {
     DetailNavBar,
@@ -99,27 +85,27 @@ export default {
   },
   methods: {
     ...mapActions(["addCart"]),
-    detailImgLoad() {
-      this.detailRefresh();
-      this.getRealTopYs();
+    detailImgLoad () {
+      this.detailRefresh()
+      this.getRealTopYs()
     },
-    navBarTitleClick(index) {
-      this.$refs.detailScroll.scrollTo(0, -this.themTopYs[index], 500);
+    navBarTitleClick (index) {
+      this.$refs.detailScroll.scrollTo(0, -this.themTopYs[index], 500)
     },
-    getTopYs() {
-      this.themTopYs = [];
+    getTopYs () {
+      this.themTopYs = []
       if (this.$refs.params && this.$refs.comment && this.$refs.recommend)
         this.themTopYs.push(
           0,
           this.$refs.params.$el.offsetTop,
           this.$refs.comment.$el.offsetTop,
           this.$refs.recommend.$el.offsetTop
-        );
+        )
       // console.log(this.themTopYs);
     },
-    detailScroll(position) {
-      const Y = -position.y;
-      const length = this.themTopYs.length;
+    detailScroll (position) {
+      const Y = -position.y
+      const length = this.themTopYs.length
       for (let i = 0; i < length; i++) {
         if (
           (Y < this.themTopYs[i + 1] && i === 0) ||
@@ -129,81 +115,81 @@ export default {
             i < length) ||
           (Y > this.themTopYs[i] && i === length - 1)
         ) {
-          this.currentIndex = i;
+          this.currentIndex = i
         }
       }
 
       // 1.判断BackTop是否显示
       if (position.y < -900) {
-        this.isShowBackTop = true;
+        this.isShowBackTop = true
       } else {
-        this.isShowBackTop = false;
+        this.isShowBackTop = false
       }
     },
 
-    backClick() {
-      this.$refs.detailScroll.scrollTo(0, 0, 500);
+    backClick () {
+      this.$refs.detailScroll.scrollTo(0, 0, 500)
     },
-    addToCart() {
-      const product = new CartGoods(this.itemInfo);
+    addToCart () {
+      const product = new CartGoods(this.itemInfo)
       // this.$store.dispatch("addCart", product);
 
       // 由于通过mapActions将store中的方法映射了过来，因此可以直接调用改方法
       //  这是普通方法使用toast，若想要看以插件形式封装的toast使用，看Cart中相关的
       this.addCart(product).then((res) => {
-        this.toastMessage = res;
-        this.$toast.show(res, 1000);
-      });
+        this.toastMessage = res
+        this.$toast.show(res, 1000)
+      })
     },
   },
-  mounted() {
-    this.detailRefresh = debounce(this.$refs.detailScroll.refresh, 50);
-    this.getRealTopYs = debounce(this.getTopYs, 50);
-    this;
+  mounted () {
+    this.detailRefresh = debounce(this.$refs.detailScroll.refresh, 50)
+    this.getRealTopYs = debounce(this.getTopYs, 50)
+    this
     this.$bus.$on("CommendImageLoad", () => {
-      this.detailRefresh();
-      this.getRealTopYs();
-    });
+      this.detailRefresh()
+      this.getRealTopYs()
+    })
   },
-  created() {
+  created () {
     // 保存传入的iid数据
-    this.iid = this.$route.params.iid;
+    this.iid = this.$route.params.iid
     // 发送网络请求请求详情页数据
     getDetail(this.iid).then((res) => {
       // console.log(res);
-      const data = res.result;
+      const data = res.result
       // 顶部图片轮播数据
-      this.topImages = data.itemInfo.topImages;
+      this.topImages = data.itemInfo.topImages
 
       // 取出并整合需要使用的数据
       this.goods = new Goods(
         data.itemInfo,
         data.columns,
         data.shopInfo.services
-      );
+      )
 
       // 取出并整合店家信息
-      this.shop = new Shop(data.shopInfo);
+      this.shop = new Shop(data.shopInfo)
 
       // 图片详情相关信息
-      this.detailInfo = data.detailInfo;
+      this.detailInfo = data.detailInfo
 
       // detailParam相关信息整合
       this.paramInfo = new GoodsParam(
         data.itemParams.info,
         data.itemParams.rule
-      );
+      )
 
       // 取出评论信息
       if (data.rate.cRate !== 0) {
-        this.commentInfo = data.rate.list[0];
+        this.commentInfo = data.rate.list[0]
       }
-      this.itemInfo = data.itemInfo;
-    });
+      this.itemInfo = data.itemInfo
+    })
 
     getRecommend().then((res) => {
-      this.recommend = res.data.list;
-    });
+      this.recommend = res.data.list
+    })
   },
 };
 </script>
