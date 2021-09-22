@@ -2,11 +2,7 @@
   <div class="list-item">
     <!-- 是否选中图标 -->
     <div class="item-selector">
-      <check-button
-        class="ck-button"
-        :isChecked="product.checked"
-        @click.native="checkClick(itemIndex)"
-      />
+      <check-button class="ck-button" :isChecked="product.checked" @click.native="checkClick(itemIndex)" />
     </div>
     <!-- 左边 -->
     <div class="item-img">
@@ -29,15 +25,15 @@
 </template>
 
 <script>
-import CheckButton from "components/content/checkButton/CheckButton";
+import CheckButton from "components/content/checkButton/CheckButton"
 export default {
   name: "CartListItem",
   components: { CheckButton },
   props: {
     product: {
       type: Object,
-      default() {
-        return {};
+      default () {
+        return {}
       },
     },
     itemIndex: {
@@ -46,14 +42,14 @@ export default {
     },
   },
   methods: {
-    imageLoad() {
-      this.$emit("CartImgLoad");
+    imageLoad () {
+      this.$emit("CartImgLoad")
     },
-    checkClick(index) {
-      this.$store.dispatch("clickCheck", index);
+    checkClick (index) {
+      this.$store.dispatch("clickCheck", index)
     },
-    titleClick() {
-      this.$router.push("/detail/" + this.product.iid);
+    titleClick () {
+      this.$router.push("/detail/" + this.product.iid)
     },
   },
 };

@@ -14,12 +14,12 @@
 </template>
 
 <script>
-import NavBar from "components/common//navbar/NavBar";
+import NavBar from "components/common//navbar/NavBar"
 
-import CartList from "./childComps/CartList.vue";
-import CartBottomBar from "./childComps/CartBottomBar.vue";
+import CartList from "./childComps/CartList.vue"
+import CartBottomBar from "./childComps/CartBottomBar.vue"
 
-import { mapGetters } from "vuex";
+import { mapGetters } from "vuex"
 export default {
   name: "Cart",
   components: {
@@ -35,7 +35,7 @@ export default {
       { length: "cartLength", list: "cartList" ...}
       ), */
   },
-};
+}
 NavBar;
 </script>
 

@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import CheckButton from "components/content/checkButton/CheckButton";
+import CheckButton from "components/content/checkButton/CheckButton"
 
 export default {
   name: "CartBottomBar",
@@ -27,33 +27,33 @@ export default {
     CheckButton,
   },
   methods: {
-    allCheckClick() {
-      this.$store.dispatch("allCheckClick");
+    allCheckClick () {
+      this.$store.dispatch("allCheckClick")
     },
-    buyClick() {
+    buyClick () {
       if (this.checkLength === 0) {
-        this.$toast.show("没有选中商品！", 1000);
+        this.$toast.show("没有选中商品！", 1000)
       } else {
-        this.$toast.show("正在结算中，请稍后！", 1500);
+        this.$toast.show("正在结算中，请稍后！", 1500)
       }
     },
   },
   computed: {
-    totalPrice() {
+    totalPrice () {
       return this.$store.state.cartList
         .filter((item) => {
-          return item.checked;
+          return item.checked
         })
         .reduce((preValue, item) => {
-          return preValue + item.newPrice * item.count;
-        }, 0);
+          return preValue + item.newPrice * item.count
+        }, 0)
     },
-    checkLength() {
+    checkLength () {
       return this.$store.state.cartList.filter((item) => {
-        return item.checked;
-      }).length;
+        return item.checked
+      }).length
     },
-    isAllChecked() {
+    isAllChecked () {
       /* 
       if (
         this.$store.state.cartList.filter((item) => {
@@ -73,9 +73,9 @@ export default {
         // return !this.$store.state.cartList.filter((item) => !item.checked).length;
 
         // 这个性能可能高点，如果找到一个没被checked的，则返回，没找到则对其结果取反为true，即全部选中
-        return !this.$store.state.cartList.find((item) => !item.checked);
+        return !this.$store.state.cartList.find((item) => !item.checked)
       } else {
-        return false;
+        return false
       }
     },
   },
