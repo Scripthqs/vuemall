@@ -1,4 +1,4 @@
-# coderwhy-supermall
+# vuemall
 
 ## Project setup
 ```
