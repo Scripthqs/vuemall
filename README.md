@@ -1,4 +1,4 @@
-# vuemall
+# Vue 移动端商城项目
 
 ## Project setup
 
@@ -30,12 +30,8 @@ npm run test
 npm run lint
 ```
 
-### Customize configuration
+## 开发文档
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-##
-
-了解本项目的详细开发流程，可以访问
+了解本项目的详细开发流程，可以访问：
 
 [项目开发文档](https://scripthqs.gitee.io/project/vuemall/)
