@@ -21,7 +21,7 @@ npm run build
 ### Run your tests
 
 ```bash
-npm run test
+npm run serve
 ```
 
 ### Lints and fixes files
