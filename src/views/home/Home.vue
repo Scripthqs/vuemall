@@ -134,6 +134,7 @@ export default {
     getHmMultidata () {
       // 1.请求多个数据,轮播图相关
       getHomeMultidata().then((res) => {
+        // console.log(res)
         this.banners = res.data.banner.list
         this.recommends = res.data.recommend.list
       })

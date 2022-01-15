@@ -17,23 +17,23 @@ export default {
     //   default: false,
     // },
   },
-  data() {
+  data () {
     return {
       message: "",
       isShow: false,
       // 这里定义了一个定时器，这样就不会启动多个定时器，方便停止和启动
       timer: null,
-    };
+    }
   },
   methods: {
-    show(message, duration) {
-      this.isShow = true;
-      this.message = message;
-      clearTimeout(this.timer);
+    show (message, duration) {
+      this.isShow = true
+      this.message = message
+      clearTimeout(this.timer)
       this.timer = setTimeout(() => {
-        this.isShow = false;
-        this.message = "";
-      }, duration);
+        this.isShow = false
+        this.message = ""
+      }, duration)
     },
   },
 };

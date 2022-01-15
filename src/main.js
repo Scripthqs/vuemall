@@ -7,8 +7,8 @@ import FastClick from 'fastclick'
 import VueLazyload from 'vue-lazyload'
 
 // 每次使用太麻烦了，直接将Scroll注册为全局组件算了
-import Scroll from "components/common/scroll/Scroll";
-Vue.component("Scroll", Scroll);
+import Scroll from "components/common/scroll/Scroll"
+Vue.component("Scroll", Scroll)
 
 
 Vue.config.productionTip = false

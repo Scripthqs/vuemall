@@ -26,11 +26,11 @@
 export default {
   name: "DetailBottomBar",
   methods: {
-    addToCart() {
-      this.$emit("addCart");
+    addToCart () {
+      this.$emit("addCart")
     },
-    undevelopedToast() {
-      this.$toast.show("尚未开发！", 1000);
+    undevelopedToast () {
+      this.$toast.show("尚未开发！", 1000)
     },
   },
 };
