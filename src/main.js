@@ -5,11 +5,10 @@ import store from './store'
 import toast from 'components/common/toast/'
 import FastClick from 'fastclick'
 import VueLazyload from 'vue-lazyload'
-
+import NP from 'number-precision'
 // 每次使用太麻烦了，直接将Scroll注册为全局组件算了
 import Scroll from "components/common/scroll/Scroll"
 Vue.component("Scroll", Scroll)
-
 
 Vue.config.productionTip = false
 
@@ -28,6 +27,10 @@ Vue.use(VueLazyload, {
   error: require('assets/img/common/placeholder.png')
 })
 
+Vue.prototype.$NP = NP
+
+NP.enableBoundaryChecking(false)
+console.log(NP)
 
 new Vue({
   router,

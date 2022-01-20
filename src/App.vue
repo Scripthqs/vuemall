@@ -7,22 +7,22 @@
   </div>
 </template>
 <script>
-import MainTabBar from "components/content/mainTabbar/MainTabBar.vue";
+import MainTabBar from "components/content/mainTabbar/MainTabBar.vue"
 export default {
   name: "App",
   components: {
     MainTabBar,
   },
-  data() {
+  data () {
     return {
       isDetail: false,
-    };
+    }
   },
-  updated() {
+  updated () {
     if (this.$route.path.indexOf("/detail") !== -1) {
-      this.isDetail = true;
+      this.isDetail = true
     } else {
-      this.isDetail = false;
+      this.isDetail = false
     }
   },
 };

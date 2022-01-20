@@ -46,7 +46,11 @@ export default {
           return item.checked
         })
         .reduce((preValue, item) => {
-          return preValue + item.newPrice * item.count
+          // console.log(this)
+          // console.log(this.$NP)
+          // console.log(this.$NP.times)
+          // console.log(preValue + item.newPrice * item.count)
+          return this.$NP.times(item.newPrice, item.count) + preValue
         }, 0)
     },
     checkLength () {
