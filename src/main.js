@@ -27,10 +27,10 @@ Vue.use(VueLazyload, {
   error: require('assets/img/common/placeholder.png')
 })
 
+NP.enableBoundaryChecking(false)
 Vue.prototype.$NP = NP
 
-NP.enableBoundaryChecking(false)
-console.log(NP)
+
 
 new Vue({
   router,
