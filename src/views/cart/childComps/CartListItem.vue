@@ -5,7 +5,7 @@
       <check-button class="ck-button" :isChecked="product.checked" @click.native="checkClick(itemIndex)" />
     </div>
     <!-- 左边 -->
-    <div class="item-img">
+    <div class="item-img" @click="detailClick">
       <div class="div-img">
         <img :src="product.imgURL" alt="" @load="imageLoad" />
       </div>
@@ -13,12 +13,17 @@
 
     <!-- 右边 -->
     <div class="item-right">
-      <div class="item-title" @click="titleClick">{{ product.title }}</div>
+      <div class="item-title" @click="detailClick">{{ product.title }}</div>
       <div class="item-desc">商品描述：{{ product.desc }}</div>
 
       <div class="item-price-count">
         <span class="item-price">¥{{ product.newPrice }}</span>
-        <span class="item-count">×{{ product.count }}</span>
+        <div class="right">
+          <button @click="decreaseCount">-</button>
+          <span class="item-count">×{{ product.count }}</span>
+          <button @click="increaseCount">+</button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -48,9 +53,17 @@ export default {
     checkClick (index) {
       this.$store.dispatch("clickCheck", index)
     },
-    titleClick () {
+    detailClick () {
       this.$router.push("/detail/" + this.product.iid)
     },
+    decreaseCount () {
+      if (this.product.count > 1) {
+        this.product.count--
+      }
+    },
+    increaseCount () {
+      this.product.count++
+    }
   },
 };
 </script>
@@ -115,5 +128,22 @@ export default {
 }
 .ck-button {
   flex: none;
+}
+/* .right div {
+  display: inline-block;
+  width: 30px;
+  margin: 0 5px;
+} */
+.right button {
+  background: #fff;
+  font-size: 16px;
+  /* text-align: center; */
+  padding: 0 6px;
+  color: #666;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+}
+.right .item-count {
+  margin: 0 6px;
 }
 </style>

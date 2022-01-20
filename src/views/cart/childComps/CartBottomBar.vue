@@ -13,7 +13,7 @@
     </div>
 
     <div class="buy-product" @click="buyClick">
-      <span>去结算({{ checkLength }})</span>
+      <span>结算({{ checkLength }})</span>
     </div>
   </div>
 </template>
@@ -34,9 +34,10 @@ export default {
       if (this.checkLength === 0) {
         this.$toast.show("没有选中商品！", 1000)
       } else {
-        this.$toast.show("正在结算中，请稍后！", 1500)
+        this.$toast.show("结算开发中！", 1500)
       }
     },
+
   },
   computed: {
     totalPrice () {
@@ -94,7 +95,7 @@ export default {
   display: flex;
   align-items: center;
   line-height: 44px;
-  font-size: 17px;
+  font-size: 14px;
 }
 .check-icon {
   display: flex;
