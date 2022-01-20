@@ -9,7 +9,7 @@
     </div>
 
     <div class="total-price">
-      <span>合计：￥{{ totalPrice }}</span>
+      合计：<span class="total-num">￥{{ totalPrice }}</span>
     </div>
 
     <div class="buy-product" @click="buyClick">
@@ -110,6 +110,9 @@ export default {
 }
 .total-price {
   width: 40vw;
+}
+.total-num {
+  color: orangered;
 }
 .buy-product {
   width: 30vw;

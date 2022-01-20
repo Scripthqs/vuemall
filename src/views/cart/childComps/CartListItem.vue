@@ -144,6 +144,6 @@ export default {
   border-radius: 50%;
 }
 .right .item-count {
-  margin: 0 6px;
+  margin: 0 8px;
 }
 </style>
