@@ -3,7 +3,7 @@
     <keep-alive exclude="Detail">
       <router-view></router-view>
     </keep-alive>
-    <main-tab-bar v-if="!isDetail"></main-tab-bar>
+    <main-tab-bar v-if="(!isDetail) && (!$route.meta.noFooter)"></main-tab-bar>
   </div>
 </template>
 <script>

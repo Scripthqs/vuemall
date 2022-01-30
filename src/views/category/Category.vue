@@ -59,7 +59,7 @@ export default {
       getCategory().then((res) => {
         this.categories = res.data.category.list
         for (let index in this.categories) {
-          // console.log(index);
+          console.log(index)
           this.categories[index].saveY = 0
           this.categoryData[index] = {
             subcategories: [],
@@ -158,6 +158,7 @@ export default {
       if (!this.categoryData[this.menuIndex]) {
         return []
       }
+      console.log(this.categoryData[this.menuIndex].categoryDetail[this.currentTab])
       return this.categoryData[this.menuIndex].categoryDetail[this.currentTab]
     },
   },
@@ -191,15 +192,18 @@ export default {
   bottom: 49px;
   overflow: hidden;
   display: flex;
+  /* border: 1px solid red; */
 }
 
 .menu-left {
   padding: 5px 0;
   height: 100%;
+  /* border: 1px solid green; */
 }
 .content-right {
   height: 100%;
   margin: 5px;
   flex: 1;
+  /* border: 1px solid yellow; */
 }
 </style>
